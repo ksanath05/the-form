@@ -18,6 +18,7 @@
             --primary: #6366f1;
             --primary-dark: #4f46e5;
             --success: #10b981;
+            --warning: #f59e0b;
             --error: #ef4444;
             --bg: #ffffff;
             --surface: #f9fafb;
@@ -168,6 +169,18 @@
             transform: none;
         }
 
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 2px solid var(--border);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
         .notification {
             position: fixed;
             top: 20px;
@@ -193,6 +206,11 @@
 
         .notification.error {
             background: var(--error);
+            color: white;
+        }
+
+        .notification.warning {
+            background: var(--warning);
             color: white;
         }
 
@@ -237,6 +255,96 @@
             margin-top: 8px;
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-body {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: grid;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn-secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .file-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: var(--bg);
+            border-radius: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .file-link:hover {
+            background: var(--primary);
+            color: white;
+        }
+
         @media (max-width: 640px) {
             .notification {
                 left: 20px;
@@ -246,6 +354,10 @@
             
             .notification.show {
                 transform: translateY(0);
+            }
+
+            .modal-content {
+                padding: 24px;
             }
         }
 
@@ -288,7 +400,7 @@
                         📋 Paste from Clipboard
                     </button>
                 </div>
-                <p class="hint">The link you want to archive</p>
+                <p class="hint">YouTube, GitHub repos, articles, and more...</p>
             </div>
 
             <div class="form-group">
@@ -307,7 +419,34 @@
         </form>
 
         <div class="footer">
-            Powered by Gemini AI & Cloudflare • <a href="https://github.com" target="_blank">View on GitHub</a>
+            Powered by Gemini AI & Cloudflare • GitHub Archive
+        </div>
+    </div>
+
+    <!-- Duplicate Detection Modal -->
+    <div id="duplicateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                ⚠️ Link Already Saved!
+            </div>
+            <div class="modal-body">
+                <p>This link was previously saved on <strong id="savedDate"></strong>.</p>
+                <a href="#" id="existingFileLink" target="_blank" class="file-link">
+                    📄 View Existing File
+                </a>
+                <p style="margin-top: 16px;">What would you like to do?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeDuplicateModal()">
+                    ❌ Cancel
+                </button>
+                <button class="modal-btn modal-btn-primary" onclick="updateExisting()">
+                    🔄 Update Existing
+                </button>
+                <button class="modal-btn modal-btn-primary" onclick="saveAsNew()">
+                    ➕ Save as New Entry
+                </button>
+            </div>
         </div>
     </div>
 
@@ -319,8 +458,11 @@
         const submitBtn = document.getElementById('submitBtn');
         const urlInput = document.getElementById('url');
         const noteInput = document.getElementById('personalNote');
+        const duplicateModal = document.getElementById('duplicateModal');
 
-        // Auto-fill URL from clipboard on page load (if available)
+        let duplicateData = null;
+
+        // Auto-fill URL from clipboard on page load
         window.addEventListener('load', async () => {
             try {
                 if (navigator.clipboard && navigator.clipboard.readText) {
@@ -331,9 +473,11 @@
                     }
                 }
             } catch (err) {
-                // Clipboard permission not granted or not available
                 console.log('Clipboard access not available');
             }
+
+            // Load recent saves from localStorage
+            loadRecentSaves();
         });
 
         // Paste button function
@@ -377,7 +521,18 @@
                 return;
             }
 
-            // Show loading state
+            // Check local recent saves first
+            const recentDuplicate = checkRecentSaves(url);
+            if (recentDuplicate) {
+                showDuplicateModal(recentDuplicate);
+                return;
+            }
+
+            // Save the link
+            await saveLink(url, personalNote);
+        });
+
+        async function saveLink(url, personalNote, action = null, existingFilename = null) {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="loading"></span> Saving...';
 
@@ -389,19 +544,31 @@
                     },
                     body: JSON.stringify({
                         url: url,
-                        personalNote: personalNote || undefined
+                        personalNote: personalNote || undefined,
+                        action: action,
+                        existingFilename: existingFilename
                     })
                 });
 
                 const data = await response.json();
 
-                if (data.success) {
+                if (data.duplicate) {
+                    // Server found a duplicate
+                    showDuplicateModal({
+                        filename: data.existingFile,
+                        url: data.existingFileUrl,
+                        date: data.savedDate
+                    });
+                } else if (data.success) {
                     showNotification('✅ Link archived successfully!', 'success');
+                    
+                    // Add to recent saves
+                    addToRecentSaves(url, data.filename);
                     
                     // Clear form
                     form.reset();
                     
-                    // Optional: Show filename
+                    // Show filename
                     if (data.filename) {
                         setTimeout(() => {
                             showNotification(`📄 Saved as: ${data.filename}`, 'success');
@@ -414,15 +581,81 @@
                 showNotification('❌ Network error. Please try again.', 'error');
                 console.error('Error:', error);
             } finally {
-                // Reset button
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '💾 Save Link';
             }
-        });
+        }
+
+        // Recent saves management
+        function loadRecentSaves() {
+            const saves = localStorage.getItem('recentSaves');
+            return saves ? JSON.parse(saves) : [];
+        }
+
+        function addToRecentSaves(url, filename) {
+            let saves = loadRecentSaves();
+            
+            // Add new save
+            saves.unshift({
+                url: url,
+                filename: filename,
+                date: new Date().toISOString()
+            });
+            
+            // Keep only last 100
+            saves = saves.slice(0, 100);
+            
+            localStorage.setItem('recentSaves', JSON.stringify(saves));
+        }
+
+        function checkRecentSaves(url) {
+            const saves = loadRecentSaves();
+            const found = saves.find(save => save.url === url);
+            
+            if (found) {
+                return {
+                    filename: found.filename,
+                    date: new Date(found.date).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    }),
+                    url: `https://github.com/ksanath05/my-link-archive/blob/main/summaries/${found.filename}`
+                };
+            }
+            
+            return null;
+        }
+
+        // Duplicate modal functions
+        function showDuplicateModal(data) {
+            duplicateData = data;
+            document.getElementById('savedDate').textContent = data.date;
+            document.getElementById('existingFileLink').href = data.url;
+            duplicateModal.classList.add('show');
+        }
+
+        function closeDuplicateModal() {
+            duplicateModal.classList.remove('show');
+            duplicateData = null;
+        }
+
+        async function updateExisting() {
+            closeDuplicateModal();
+            const url = urlInput.value.trim();
+            const personalNote = noteInput.value.trim();
+            await saveLink(url, personalNote, 'update', duplicateData.filename);
+        }
+
+        async function saveAsNew() {
+            closeDuplicateModal();
+            const url = urlInput.value.trim();
+            const personalNote = noteInput.value.trim();
+            await saveLink(url, personalNote, 'save_new', null);
+        }
 
         // Show notification
         function showNotification(message, type = 'success') {
-            // Remove existing notifications
             const existing = document.querySelector('.notification');
             if (existing) {
                 existing.remove();
@@ -433,12 +666,10 @@
             notification.textContent = message;
             document.body.appendChild(notification);
 
-            // Trigger animation
             setTimeout(() => {
                 notification.classList.add('show');
             }, 10);
 
-            // Auto-hide after 3 seconds
             setTimeout(() => {
                 notification.classList.remove('show');
                 setTimeout(() => {
@@ -453,7 +684,13 @@
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                 form.dispatchEvent(new Event('submit'));
             }
+            
+            // Escape to close modal
+            if (e.key === 'Escape' && duplicateModal.classList.contains('show')) {
+                closeDuplicateModal();
+            }
         });
     </script>
 </body>
 </html>
+
