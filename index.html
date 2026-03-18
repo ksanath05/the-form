@@ -140,6 +140,20 @@
             margin-top: 6px;
         }
 
+        .tag-counter {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .tag-counter.warning {
+            color: var(--warning);
+        }
+
+        .tag-counter.error {
+            color: var(--error);
+        }
+
         .btn {
             width: 100%;
             padding: 16px;
@@ -169,18 +183,6 @@
             transform: none;
         }
 
-        .btn-secondary {
-            background: var(--bg);
-            color: var(--text);
-            border: 2px solid var(--border);
-            box-shadow: none;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
         .notification {
             position: fixed;
             top: 20px;
@@ -206,11 +208,6 @@
 
         .notification.error {
             background: var(--error);
-            color: white;
-        }
-
-        .notification.warning {
-            background: var(--warning);
             color: white;
         }
 
@@ -249,116 +246,98 @@
             color: var(--primary);
         }
 
-        .quick-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .modal {
+        .progress-container {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
+            margin-top: 24px;
             padding: 20px;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--surface);
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px var(--shadow);
-        }
-
-        .modal-header {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .modal-body {
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-            line-height: 1.6;
-        }
-
-        .modal-actions {
-            display: grid;
-            gap: 12px;
-        }
-
-        .modal-btn {
-            padding: 14px;
-            border-radius: 10px;
-            border: none;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .modal-btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .modal-btn-secondary {
             background: var(--bg);
-            color: var(--text);
+            border-radius: 12px;
             border: 2px solid var(--border);
         }
 
-        .modal-btn:hover {
-            transform: translateY(-2px);
+        .progress-container.show {
+            display: block;
         }
 
-        .file-link {
-            display: inline-flex;
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 6px;
-            padding: 8px 12px;
-            background: var(--bg);
-            border-radius: 8px;
-            color: var(--primary);
-            text-decoration: none;
+            margin-bottom: 12px;
+        }
+
+        .progress-title {
+            font-weight: 600;
             font-size: 14px;
-            margin-top: 8px;
         }
 
-        .file-link:hover {
-            background: var(--primary);
-            color: white;
+        .progress-count {
+            font-size: 14px;
+            color: var(--text-secondary);
         }
 
-        @media (max-width: 640px) {
-            .notification {
-                left: 20px;
-                right: 20px;
-                transform: translateY(-100px);
-            }
-            
-            .notification.show {
-                transform: translateY(0);
-            }
+        .progress-bar-bg {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
 
-            .modal-content {
-                padding: 24px;
-            }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .progress-item.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .progress-item.processing {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .progress-item.waiting {
+            color: var(--text-secondary);
+        }
+
+        .progress-item.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .bulk-mode-warning {
+            display: none;
+            padding: 12px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 2px solid var(--warning);
+            border-radius: 8px;
+            color: var(--warning);
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        .bulk-mode-warning.show {
+            display: block;
         }
 
         .footer {
@@ -368,11 +347,6 @@
             border-top: 1px solid var(--border);
             color: var(--text-secondary);
             font-size: 12px;
-        }
-
-        .footer a {
-            color: var(--primary);
-            text-decoration: none;
         }
     </style>
 </head>
@@ -387,20 +361,20 @@
         <form id="archiveForm">
             <div class="form-group">
                 <label for="url">URL *</label>
-                <input 
-                    type="url" 
+                <textarea 
                     id="url" 
                     name="url" 
-                    placeholder="https://example.com/article" 
+                    placeholder="https://example.com/article&#10;&#10;For bulk: paste multiple URLs (one per line)"
                     required
                     autocomplete="off"
-                >
-                <div class="quick-actions">
+                    rows="3"
+                ></textarea>
+                <div>
                     <button type="button" class="paste-btn" onclick="pasteURL()">
                         📋 Paste from Clipboard
                     </button>
                 </div>
-                <p class="hint">YouTube, GitHub repos, articles, and more...</p>
+                <p class="hint">Single URL or multiple URLs (one per line) for bulk saving. Max 50 URLs.</p>
             </div>
 
             <div class="form-group">
@@ -410,7 +384,24 @@
                     name="personalNote" 
                     placeholder="Why is this interesting? What does it remind you of?"
                 ></textarea>
-                <p class="hint">Optional: Add your thoughts or context</p>
+                <p class="hint" id="noteHint">Optional: Add your thoughts or context</p>
+            </div>
+
+            <div class="form-group" id="customTagsGroup">
+                <label for="customTags">Custom Tags (optional)</label>
+                <input 
+                    type="text" 
+                    id="customTags" 
+                    name="customTags" 
+                    placeholder="urgent, project-alpha, research"
+                    autocomplete="off"
+                >
+                <p class="tag-counter" id="tagCounter">0 of 5 tags</p>
+                <p class="hint">Separate with commas. Max 5 tags. Combined with AI-generated tags.</p>
+            </div>
+
+            <div class="bulk-mode-warning" id="bulkWarning">
+                ⚠️ Bulk mode: Custom tags not available. Each link will get AI-generated tags only.
             </div>
 
             <button type="submit" class="btn" id="submitBtn">
@@ -418,44 +409,32 @@
             </button>
         </form>
 
-        <div class="footer">
-            Powered by Gemini AI & Cloudflare • GitHub Archive
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-header">
+                <span class="progress-title">Processing Links...</span>
+                <span class="progress-count" id="progressCount">0 of 0</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-list" id="progressList"></div>
         </div>
-    </div>
 
-    <!-- Duplicate Detection Modal -->
-    <div id="duplicateModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                ⚠️ Link Already Saved!
-            </div>
-            <div class="modal-body">
-                <p>This link was previously saved on <strong id="savedDate"></strong>.</p>
-                <a href="#" id="existingFileLink" target="_blank" class="file-link">
-                    📄 View Existing File
-                </a>
-                <p style="margin-top: 16px;">What would you like to do?</p>
-            </div>
-            <div class="modal-actions">
-                <button class="modal-btn modal-btn-secondary" onclick="closeDuplicateModal()">
-                    ❌ Cancel
-                </button>
-                <button class="modal-btn modal-btn-primary" onclick="updateExisting()">
-                    🔄 Update Existing
-                </button>
-                <button class="modal-btn modal-btn-primary" onclick="saveAsNew()">
-                    ➕ Save as New Entry
-                </button>
-            </div>
+        <div class="footer">
+            Powered by Gemini AI & Cloudflare
         </div>
     </div>
 
     <script>
-        // Configuration
+        // ============================================
+        // CONFIGURATION - UPDATE THESE VALUES
+        // ============================================
+        
+        // Your production worker URL
         const WORKER_URL = 'https://link-archive-worker.fortheloveofnet.workers.dev';
         
-        // Google Analytics Configuration
-        const GA_MEASUREMENT_ID = 'G-YzlhNGYwYTItNzc5NS00YzQzLWI5MzAtZTdmODQzNzIxYTk4';
+        // Google Analytics Configuration (obfuscated token)
+        const GA_MEASUREMENT_ID = 'G-YOUR_BASE64_ENCODED_TOKEN_HERE';
         const GA_API_SECRET = 'default';
         const GA_SESSION_ID = Date.now();
         
@@ -470,14 +449,28 @@
             const rawId = GA_MEASUREMENT_ID.split('-')[1];
             return atob(rawId);
         };
+        
+        // ============================================
+        // END CONFIGURATION
+        // ============================================
 
         const form = document.getElementById('archiveForm');
         const submitBtn = document.getElementById('submitBtn');
         const urlInput = document.getElementById('url');
         const noteInput = document.getElementById('personalNote');
-        const duplicateModal = document.getElementById('duplicateModal');
+        const customTagsInput = document.getElementById('customTags');
+        const customTagsGroup = document.getElementById('customTagsGroup');
+        const tagCounter = document.getElementById('tagCounter');
+        const bulkWarning = document.getElementById('bulkWarning');
+        const noteHint = document.getElementById('noteHint');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressCount = document.getElementById('progressCount');
+        const progressList = document.getElementById('progressList');
 
-        let duplicateData = null;
+        let isBulkMode = false;
+        let bulkUrls = [];
+        let currentBulkIndex = 0;
 
         // Auto-fill URL from clipboard on page load
         window.addEventListener('load', async () => {
@@ -492,18 +485,68 @@
             } catch (err) {
                 console.log('Clipboard access not available');
             }
-
-            // Load recent saves from localStorage
-            loadRecentSaves();
         });
 
-        // Paste button function
+        // Monitor URL input for bulk mode detection
+        urlInput.addEventListener('input', () => {
+            detectBulkMode();
+            adjustTextareaHeight();
+        });
+
+        // Monitor custom tags input for counter
+        customTagsInput.addEventListener('input', () => {
+            updateTagCounter();
+        });
+
+        function detectBulkMode() {
+            const text = urlInput.value.trim();
+            const lines = text.split('\n').filter(line => line.trim());
+            const urls = lines.filter(line => isValidURL(line.trim()));
+            
+            if (urls.length > 1) {
+                isBulkMode = true;
+                customTagsGroup.style.display = 'none';
+                bulkWarning.classList.add('show');
+                noteHint.textContent = 'Optional: This note will apply to all links in the batch';
+                submitBtn.innerHTML = `💾 Save ${urls.length} Links`;
+            } else {
+                isBulkMode = false;
+                customTagsGroup.style.display = 'block';
+                bulkWarning.classList.remove('show');
+                noteHint.textContent = 'Optional: Add your thoughts or context';
+                submitBtn.innerHTML = '💾 Save Link';
+            }
+        }
+
+        function adjustTextareaHeight() {
+            urlInput.style.height = 'auto';
+            urlInput.style.height = (urlInput.scrollHeight) + 'px';
+        }
+
+        function updateTagCounter() {
+            const tags = customTagsInput.value.split(',').map(t => t.trim()).filter(t => t);
+            const count = tags.length;
+            tagCounter.textContent = `${count} of 5 tags`;
+            
+            if (count > 5) {
+                tagCounter.classList.add('error');
+                tagCounter.classList.remove('warning');
+            } else if (count === 5) {
+                tagCounter.classList.add('warning');
+                tagCounter.classList.remove('error');
+            } else {
+                tagCounter.classList.remove('error', 'warning');
+            }
+        }
+
         async function pasteURL() {
             try {
                 const text = await navigator.clipboard.readText();
                 if (text) {
                     urlInput.value = text;
                     urlInput.focus();
+                    detectBulkMode();
+                    adjustTextareaHeight();
                     showNotification('✅ Pasted from clipboard', 'success');
                 }
             } catch (err) {
@@ -511,7 +554,6 @@
             }
         }
 
-        // URL validation
         function isValidURL(string) {
             try {
                 new URL(string);
@@ -525,33 +567,124 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const url = urlInput.value.trim();
+            const text = urlInput.value.trim();
             const personalNote = noteInput.value.trim();
+            const customTags = customTagsInput.value.trim();
 
-            if (!url) {
+            if (!text) {
                 showNotification('❌ Please enter a URL', 'error');
                 return;
             }
 
-            if (!isValidURL(url)) {
-                showNotification('❌ Please enter a valid URL', 'error');
+            // Check if bulk mode
+            const lines = text.split('\n').filter(line => line.trim());
+            const urls = lines.filter(line => isValidURL(line.trim()));
+
+            if (urls.length === 0) {
+                showNotification('❌ No valid URLs found', 'error');
                 return;
             }
 
-            // Check local recent saves first
-            const recentDuplicate = checkRecentSaves(url);
-            if (recentDuplicate) {
-                showDuplicateModal(recentDuplicate);
+            if (urls.length > 50) {
+                showNotification('❌ Maximum 50 URLs allowed per batch', 'error');
                 return;
             }
 
-            // Save the link
-            await saveLink(url, personalNote);
+            if (urls.length > 1) {
+                // Bulk mode
+                await processBulkUrls(urls, personalNote);
+            } else {
+                // Single URL mode
+                const url = urls[0];
+                
+                // Validate custom tags
+                if (customTags) {
+                    const tagArray = customTags.split(',').map(t => t.trim()).filter(t => t);
+                    if (tagArray.length > 5) {
+                        showNotification('❌ Maximum 5 custom tags allowed', 'error');
+                        return;
+                    }
+                }
+
+                await saveLink(url, personalNote, customTags);
+            }
         });
 
-        async function saveLink(url, personalNote, action = null, existingFilename = null) {
+        async function processBulkUrls(urls, personalNote) {
+            bulkUrls = urls;
+            currentBulkIndex = 0;
+            
+            // Show progress container
+            progressContainer.classList.add('show');
+            progressList.innerHTML = '';
+            
+            // Create progress items
+            urls.forEach((url, index) => {
+                const item = document.createElement('div');
+                item.className = 'progress-item waiting';
+                item.id = `progress-item-${index}`;
+                item.innerHTML = `<span>⏸️</span> <span>${url}</span>`;
+                progressList.appendChild(item);
+            });
+
+            // Disable form
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="loading"></span> Saving...';
+            urlInput.disabled = true;
+            noteInput.disabled = true;
+
+            // Process each URL sequentially
+            for (let i = 0; i < urls.length; i++) {
+                currentBulkIndex = i;
+                updateProgress(i, urls.length);
+                
+                const item = document.getElementById(`progress-item-${i}`);
+                item.className = 'progress-item processing';
+                item.innerHTML = `<span>⏳</span> <span>${urls[i]}</span>`;
+
+                try {
+                    await saveLink(urls[i], personalNote, null, null, true); // true = silent mode
+                    
+                    item.className = 'progress-item success';
+                    item.innerHTML = `<span>✅</span> <span>${urls[i]}</span>`;
+                } catch (error) {
+                    item.className = 'progress-item error';
+                    item.innerHTML = `<span>❌</span> <span>${urls[i]} - ${error.message}</span>`;
+                }
+
+                // Wait 2 seconds between requests to respect rate limits
+                if (i < urls.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+            }
+
+            // Complete
+            updateProgress(urls.length, urls.length);
+            showNotification(`✅ Processed ${urls.length} links!`, 'success');
+
+            // Re-enable form
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                urlInput.disabled = false;
+                noteInput.disabled = false;
+                form.reset();
+                progressContainer.classList.remove('show');
+                isBulkMode = false;
+                detectBulkMode();
+                updateTagCounter();
+            }, 3000);
+        }
+
+        function updateProgress(current, total) {
+            const percent = (current / total) * 100;
+            progressBar.style.width = `${percent}%`;
+            progressCount.textContent = `${current} of ${total}`;
+        }
+
+        async function saveLink(url, personalNote, customTags, action = null, silentMode = false) {
+            if (!silentMode) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading"></span> Saving...';
+            }
 
             try {
                 const response = await fetch(WORKER_URL, {
@@ -563,113 +696,40 @@
                     body: JSON.stringify({
                         url: url,
                         personalNote: personalNote || undefined,
-                        action: action,
-                        existingFilename: existingFilename
+                        customTags: customTags || undefined,
+                        action: action
                     })
                 });
 
                 const data = await response.json();
 
-                if (data.duplicate) {
-                    // Server found a duplicate
-                    showDuplicateModal({
-                        filename: data.existingFile,
-                        url: data.existingFileUrl,
-                        date: data.savedDate
-                    });
-                } else if (data.success) {
-                    showNotification('✅ Link archived successfully!', 'success');
-                    
-                    // Add to recent saves
-                    addToRecentSaves(url, data.filename);
-                    
-                    // Clear form
-                    form.reset();
-                    
-                    // Show filename
-                    if (data.filename) {
-                        setTimeout(() => {
-                            showNotification(`📄 Saved as: ${data.filename}`, 'success');
-                        }, 2000);
+                if (data.success) {
+                    if (!silentMode) {
+                        showNotification('✅ Link archived successfully!', 'success');
+                        form.reset();
+                        updateTagCounter();
+                        
+                        if (data.filename) {
+                            setTimeout(() => {
+                                showNotification(`📄 Saved as: ${data.filename}`, 'success');
+                            }, 2000);
+                        }
                     }
                 } else {
-                    showNotification(`❌ Error: ${data.error || 'Failed to archive'}`, 'error');
+                    throw new Error(data.error || 'Failed to archive');
                 }
             } catch (error) {
-                showNotification('❌ Network error. Please try again.', 'error');
+                if (!silentMode) {
+                    showNotification('❌ Error: ' + error.message, 'error');
+                }
                 console.error('Error:', error);
+                throw error;
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '💾 Save Link';
+                if (!silentMode) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '💾 Save Link';
+                }
             }
-        }
-
-        // Recent saves management
-        function loadRecentSaves() {
-            const saves = localStorage.getItem('recentSaves');
-            return saves ? JSON.parse(saves) : [];
-        }
-
-        function addToRecentSaves(url, filename) {
-            let saves = loadRecentSaves();
-            
-            // Add new save
-            saves.unshift({
-                url: url,
-                filename: filename,
-                date: new Date().toISOString()
-            });
-            
-            // Keep only last 100
-            saves = saves.slice(0, 100);
-            
-            localStorage.setItem('recentSaves', JSON.stringify(saves));
-        }
-
-        function checkRecentSaves(url) {
-            const saves = loadRecentSaves();
-            const found = saves.find(save => save.url === url);
-            
-            if (found) {
-                return {
-                    filename: found.filename,
-                    date: new Date(found.date).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric'
-                    }),
-                    url: `https://github.com/YOUR-USERNAME/my-link-archive/blob/main/summaries/${found.filename}`
-                };
-            }
-            
-            return null;
-        }
-
-        // Duplicate modal functions
-        function showDuplicateModal(data) {
-            duplicateData = data;
-            document.getElementById('savedDate').textContent = data.date;
-            document.getElementById('existingFileLink').href = data.url;
-            duplicateModal.classList.add('show');
-        }
-
-        function closeDuplicateModal() {
-            duplicateModal.classList.remove('show');
-            duplicateData = null;
-        }
-
-        async function updateExisting() {
-            closeDuplicateModal();
-            const url = urlInput.value.trim();
-            const personalNote = noteInput.value.trim();
-            await saveLink(url, personalNote, 'update', duplicateData.filename);
-        }
-
-        async function saveAsNew() {
-            closeDuplicateModal();
-            const url = urlInput.value.trim();
-            const personalNote = noteInput.value.trim();
-            await saveLink(url, personalNote, 'save_new', null);
         }
 
         // Show notification
@@ -698,14 +758,8 @@
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            // Cmd/Ctrl + Enter to submit
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                 form.dispatchEvent(new Event('submit'));
-            }
-            
-            // Escape to close modal
-            if (e.key === 'Escape' && duplicateModal.classList.contains('show')) {
-                closeDuplicateModal();
             }
         });
     </script>
